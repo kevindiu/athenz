@@ -177,5 +177,5 @@ sudo systemctl restart docker
 - [zts Dockerfile](./zts/Dockerfile)
 - [Makefile](../Makefile)
 - [setup-scripts](./setup-scripts)
-- [deploy-scripts](../deploy-scripts)
+- [deploy-scripts](./deploy-scripts)
 - [docker-stack.yaml](./docker-stack.yaml)
