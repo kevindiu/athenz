@@ -26,11 +26,9 @@ make setup-docker-network
 # 4. run Athenz
 make run-docker-dev
 ```
-```bash
-# clean up containers
-make remove-all
 
-# clean up
+## Cleanup 
+```bash
 make clean
 ```
 
