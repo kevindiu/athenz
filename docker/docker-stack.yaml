@@ -91,6 +91,12 @@ services:
       - ./zms/var:/opt/athenz/zms/var
       - ./zms/conf:/opt/athenz/zms/conf/zms_server
       - ./logs/zms:/opt/athenz/zms/logs/zms_server
+    # healthcheck:
+    #   test: ["CMD", "curl", "-k", "-s", "https://localhost:${ZMS_PORT}/zms/v1/status"]
+    #   start_period: 15s
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
     deploy:
       restart_policy:
         condition: any
@@ -122,6 +128,12 @@ services:
       - ./zts/var:/opt/athenz/zts/var
       - ./zts/conf:/opt/athenz/zts/conf/zts_server
       - ./logs/zts:/opt/athenz/zts/logs/zts_server
+    # healthcheck:
+    #   test: ["CMD", "curl", "-k", "-s", "https://localhost:${ZTS_PORT}/zts/v1/status"]
+    #   start_period: 15s
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
     deploy:
       restart_policy:
         condition: any

@@ -7,12 +7,9 @@
 - [Deploy Athenz with docker (development environment)](#Deploy-Athenz-with-docker-development-environment)
     - [Index](#Index)
     - [Component dependency](#Component-dependency)
-    - [Prepare ZMS configuration](#Prepare-ZMS-configuration)
-        - [details](#details)
-    - [Prepare ZTS configuration based on ZMS configuration](#Prepare-ZTS-configuration-based-on-ZMS-configuration)
-        - [details](#details-1)
-    - [UI](#UI)
-        - [prepare UI configuration](#prepare-UI-configuration)
+    - [ZMS configuration](#ZMS-configuration)
+    - [ZTS configuration](#ZTS-configuration)
+    - [UI configuration](#UI-configuration)
 
 <!-- /TOC -->
 
@@ -20,11 +17,9 @@
 ## Component dependency
 ![Athenz-components](./images/Athenz-components.png)
 
-<a id="markdown-prepare-zms-configuration" name="prepare-zms-configuration"></a>
-## Prepare ZMS configuration
+<a id="markdown-zms-configuration" name="zms-configuration"></a>
+## ZMS configuration
 
-<a id="markdown-details" name="details"></a>
-### details
 1. ZMS database configuration
   
     1. [zms-db.cnf](../db/zms/zms-db.cnf)
@@ -33,11 +28,11 @@
     1. [zms_public.pem](../zms/var/keys/zms_public.pem)
 1. ZMS server X.509 certificate
     1. [zms_key.pem](../zms/var/certs/zms_key.pem)
-    1. [dev_x509_cert.cnf](../zms/var/certs/dev_x509_cert.cnf)
+    1. [dev_x509_cert.cnf](../zms/var/certs/dev_x509_cert.cnf) (make sure CN, SAN, IP SAN are valid)
     1. [zms_cert.pem](../zms/var/certs/zms_cert.pem)
     1. [zms_keystore.pkcs12](../zms/var/certs/zms_keystore.pkcs12)
     
-1. ZMS trust store with ZTS and UI CA certificate
+1. ZMS trust store with CA certificate of ZTS and UI
 
     1. [zms_truststore.jks](../zms/var/certs/zms_truststore.jks)
 
@@ -46,11 +41,11 @@
       
         ```properties
         athenz.zms.object_store_factory_class=com.yahoo.athenz.zms.store.impl.JDBCObjectStoreFactory
-        athenz.zms.jdbc_store=jdbc:mysql://localhost:3306/zms_server
+        athenz.zms.jdbc_store=jdbc:mysql://athenz-zms-db:3306/zms_server
         athenz.zms.jdbc_user=root
         #athenz.zms.jdbc_password=mariadb
         ```
-    1. [user authentication](../zms/conf/zms.properties#L10-L12)
+    1. [user/service authentication](../zms/conf/zms.properties#L10-L12)
         ```properties
         athenz.zms.authority_classes=com.yahoo.athenz.auth.impl.PrincipalAuthority,com.yahoo.athenz.auth.impl.UserAuthority
         ```
@@ -74,11 +69,8 @@
         #athenz.ssl_trust_store_password=athenz
         ```
 
-<a id="markdown-prepare-zts-configuration-based-on-zms-configuration" name="prepare-zts-configuration-based-on-zms-configuration"></a>
-## Prepare ZTS configuration based on ZMS configuration
-
-<a id="markdown-details-1" name="details-1"></a>
-### details
+<a id="markdown-zts-configuration" name="zts-configuration"></a>
+## ZTS configuration
 1. ZTS database configuration
   
     1. [zts-db.cnf](../db/zts/zts-db.cnf)
@@ -90,7 +82,7 @@
     
 1. ZTS server X.509 certificate
     1. [zts_key.pem](../zts/var/certs/zts_key.pem)
-    1. [dev_x509_cert.cnf](../zts/var/certs/dev_x509_cert.cnf)
+    1. [dev_x509_cert.cnf](../zts/var/certs/dev_x509_cert.cnf) (make sure CN, SAN, IP SAN are valid)
     1. [zts_cert.pem](../zts/var/certs/zts_cert.pem)
     1. [zts_keystore.pkcs12](../zts/var/certs/zts_keystore.pkcs12)
     
@@ -100,19 +92,19 @@
     
 1. ZTS cert signer
 
-    1. [zts_cert_signer_ca.cnf](../zts/var/certs/zts_cert_signer_ca.cnf)
-    1. [zts_cert_signer_key.pem](../zts/var/certs/zts_cert_signer_key.pem)
-    1. [zts_cert_signer_cert.pem](../zts/var/certs/zts_cert_signer_cert.pem)
+    1. [zts_cert_signer_ca.cnf](../zts/var/keys/zts_cert_signer_ca.cnf)
+    1. [zts_cert_signer_key.pem](../zts/var/keys/zts_cert_signer_key.pem)
+    1. [zts_cert_signer_cert.pem](../zts/var/keys/zts_cert_signer_cert.pem)
 
 1. `zts.properties`
     1. [database access](../zts/conf/zts.properties#L188-L220)
         ```properties
         athenz.zts.cert_record_store_factory_class=com.yahoo.athenz.zts.cert.impl.JDBCCertRecordStoreFactory
-        athenz.zts.cert_jdbc_store=jdbc:mysql://localhost:3307/zts_store
+        athenz.zts.cert_jdbc_store=jdbc:mysql://athenz-zts-db:3307/zts_store
         athenz.zts.cert_jdbc_user=root
         #athenz.zts.cert_jdbc_password=mariadb
         ```
-    1. [user authentication](../zts/conf/zts.properties#L10-L12)
+    1. [user/service authentication](../zts/conf/zts.properties#L10-L12)
       
         ```properties
         athenz.zts.authority_classes=com.yahoo.athenz.auth.impl.PrincipalAuthority,com.yahoo.athenz.auth.impl.CertificateAuthority
@@ -123,9 +115,11 @@
         athenz.auth.private_key_store.private_key=/opt/athenz/zts/var/keys/zts_private.pem
         athenz.auth.private_key_store.private_key_id=0
         ```
-    1. [ZTS service certificate signing class and its config](../zts/conf/zts.properties#L123-L129)
+    1. [ZTS service certificate signing class](../zts/conf/zts.properties#L123-L129) and [its config](../zts/conf/zts.properties#L61-L77)
       
         ```properties
+        athenz.zts.cert_signer_factory_class=com.yahoo.athenz.zts.cert.impl.SelfCertSignerFactory
+
         athenz.zts.self_signer_private_key_fname=/opt/athenz/zts/var/keys/zts_private.pem
         #athenz.zts.self_signer_private_key_password=athenz
         athenz.zts.self_signer_cert_dn=cn=Sample Self Signed Athenz CA,o=Athenz,c=US
@@ -161,17 +155,15 @@
     1. [ZMS URL](../zts/conf/athenz.conf#L2)
     1. [ZMS public keys](../zts/conf/athenz.conf#L4-L9)
 
-<a id="markdown-ui" name="ui"></a>
-## UI
+<a id="markdown-ui-configuration" name="ui-configuration"></a>
+## UI configuration
 
-<a id="markdown-prepare-ui-configuration" name="prepare-ui-configuration"></a>
-### prepare UI configuration
 1. UI service key pair
-    1. [athenz.ui-server.pem](../ui/keys/athenz.ui-server.pem)
-    1. [athenz.ui-server_pub.pem](../ui/keys/athenz.ui-server_pub.pem)
+    1. [athenz.ui-server.pem](../ui/var/keys/athenz.ui-server.pem)
+    1. [athenz.ui-server_pub.pem](../ui/var/keys/athenz.ui-server_pub.pem)
 1. UI server X.509 certificate
-    1. [ui_key.pem](../ui/keys/ui_key.pem)
-    1. [dev_ui_x509_cert.cnf](../ui/keys/dev_ui_x509_cert.cnf)
-    1. [ui_cert.pem](../ui/keys/ui_cert.pem)
+    1. [ui_key.pem](../ui/var/certs/ui_key.pem)
+    1. [dev_ui_x509_cert.cnf](../ui/var/certs/dev_ui_x509_cert.cnf) (make sure CN, SAN, IP SAN are valid)
+    1. [ui_cert.pem](../ui/var/certs/ui_cert.pem)
 1. `athenz.conf`
     1. same as ZTS configuration

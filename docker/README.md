@@ -171,6 +171,7 @@ sudo systemctl restart docker
     1.  file permission for keys (`chmod`)
     1.  bootstrap without user token for `zms-cli`
         1.  user token has IP address, need to fix docker container's IP
+    1.  no curl in JAVA container, docker health check on ZMS and ZTS are not working
 
 ## Important Files
 - [zms Dockerfile](./zms/Dockerfile)
