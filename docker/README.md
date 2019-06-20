@@ -25,8 +25,6 @@ make setup-docker-network
 
 # 4. run Athenz
 make run-docker-dev
-### ssh -L 4443:localhost:4443 garm
-### ssh -L 443:localhost:443 garm
 ```
 ```bash
 # clean up containers
